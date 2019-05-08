@@ -1,22 +1,28 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('bodyParser');
+const bodyParser = require('body-parser');
+
+const items = require('./routes/api/Item');
+
+
 
 const app = express();
 
 // Bodyparser Middleware
 app.use(bodyParser.json());
 
+const db = require('./config/keys').mongoURI
 
-mongoose.connect('mongodb://localhost:27017/mern-shopping-list', { useNewUrlParser: true })
-    .then(() => console.log('Connected to exercise MongoDB'))
-    .catch((err) => console.log('Catched error of', err.message))
 
-const courseSchema = new mongoose.Schema({
-    tags: [String],
-    date: { type: Date, default: Date.now },
-    name: String,
-    author: String,
-    isPublished: Boolean,
-    price: Number
-})
+// Connect to Mongo
+mongoose
+    .connect(db, { useNewUrlParser: true })
+    .then(() => console.log('connect to MongoDB'))
+    .catch(err => console.log('there is err: ', err))
+
+// Use Routes
+app.use('/api/items', items)  //connect to line 5
+
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server started on port ${port}`));
